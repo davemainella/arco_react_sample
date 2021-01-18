@@ -4,6 +4,7 @@
     import Modal from "./components/Modal";
     import axios from "axios";
 
+
     class App extends Component {
       constructor(props) {
         super(props);
@@ -50,24 +51,57 @@
           </div>
         );
       };
+
+    renderHeaders = () => {
+        let headers;
+        if (this.state.todoList.length > 0){
+            console.log(this.state.todoList[0])
+            const columns = Object.keys(this.state.todoList[0]);
+            headers = columns.map(col => (
+                <div className="col">{col}</div>                
+            ))            
+        }
+        return (
+            <div className="row">
+                {headers}
+            </div>
+        )
+    }
+
       renderItems = () => {
+          
+          function titleClasses(item){
+              let classes = "todo-title mr-2 col";
+              if (item.completed === true){
+                  classes += " completed-todo"
+              }
+              return classes
+          }
+          function rowClasses(item){
+              let classes = "list-group-item d-flex justify-content-between align-items-center row";
+              if (item.completed === false && item.due_date < new Date()){
+                  classes += " past-due"
+              }
+              return classes
+          }
+          
         const { viewCompleted } = this.state;
         const newItems = this.state.todoList.filter(
           item => item.completed === viewCompleted
         );
+          
         return newItems.map(item => (
           <li
             key={item.id}
-            className="list-group-item d-flex justify-content-between align-items-center"
+            className={rowClasses(item)}
           >
             <span
-              className={`todo-title mr-2 ${
-                this.state.viewCompleted ? "completed-todo" : ""
-              }`}
+              className={titleClasses(item)}
               title={item.description}
             >
               {item.title}
             </span>
+            <span className="col">{item.priority}</span>
             <span>
               <button
                 onClick={() => this.editItem(item)}
@@ -126,6 +160,7 @@
                     </button>
                   </div>
                   {this.renderTabList()}
+                  {this.renderHeaders()}
                   <ul className="list-group list-group-flush">
                     {this.renderItems()}
                   </ul>

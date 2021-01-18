@@ -26,6 +26,11 @@
           value = e.target.checked;
         }
         const activeItem = { ...this.state.activeItem, [name]: value };
+          
+          if (name === 'completed'){
+              activeItem['completed_time'] = new Date();
+          }
+          
         this.setState({ activeItem });
       };
       render() {
